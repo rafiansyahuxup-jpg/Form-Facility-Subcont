@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulir Informasi Subcontractor – UTPE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink2: #444;
+  --ink3: #777;
+  --rule: #c8c8c8;
+  --rule-dark: #999;
+  --bg: #f5f3ee;
+  --paper: #ffffff;
+  --accent: #1a3a5c;
+  --accent2: #2e6da4;
+  --field-bg: #fafafa;
+  --field-border: #bbb;
+  --section-bg: #1a3a5c;
+  --section-text: #ffffff;
+  --warn: #c0392b;
+  --font: 'IBM Plex Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── SCREEN SHELL ─────────────────────────────────────── */
+#shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.toolbar-left { display: flex; align-items: center; gap: 10px; }
+.toolbar h1 { font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: .02em; }
+.toolbar p { font-size: 11px; color: var(--ink3); }
+.toolbar-right { display: flex; gap: 8px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  font-family: var(--font); cursor: pointer; border: none; transition: .15s;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-outline { background: #fff; color: var(--ink); border: 1px solid var(--rule-dark); }
+.btn-outline:hover { background: #f0efea; }
+.btn-danger { background: #fff; color: var(--warn); border: 1px solid #e0c0be; }
+.btn-danger:hover { background: #fdf0ef; }
+
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: #1e3a1e; color: #b8f0b8; padding: 10px 18px;
+  border-radius: 6px; font-size: 12px; font-weight: 500;
+  opacity: 0; transform: translateY(8px); transition: .3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── FORM PAPER ───────────────────────────────────────── */
+#form-paper {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 0 2px 16px rgba(0,0,0,.08);
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+.form-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: stretch;
+  border-bottom: 2px solid var(--accent);
+}
+.form-header-left {
+  padding: 20px 24px;
+}
+.form-title {
+  font-size: 17px; font-weight: 600; color: var(--accent);
+  letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px;
+}
+.form-subtitle { font-size: 11px; color: var(--ink3); letter-spacing: .05em; text-transform: uppercase; }
+.form-header-right {
+  background: var(--accent);
+  color: #fff;
+  padding: 16px 24px;
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+  gap: 3px; min-width: 160px;
+}
+.form-header-right .lbl { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.form-header-right .val { font-size: 12px; font-weight: 500; font-family: var(--mono); }
+
+/* ── DISCLAIMER ───────────────────────────────────────── */
+.disclaimer {
+  background: #f0f4f8; border-bottom: 1px solid var(--rule);
+  padding: 12px 24px; font-size: 11px; color: var(--ink2);
+  display: flex; gap: 16px;
+}
+.disclaimer ol { padding-left: 16px; }
+.disclaimer li { margin-bottom: 3px; }
+
+/* ── SECTION HEADER ───────────────────────────────────── */
+.section-header {
+  background: var(--section-bg); color: var(--section-text);
+  padding: 7px 24px; font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+
+/* ── FORM BODY ────────────────────────────────────────── */
+.form-body { padding: 0 24px; }
+
+/* ── FIELD ROWS ───────────────────────────────────────── */
+.field-row {
+  display: grid;
+  border-bottom: 1px solid var(--rule);
+  min-height: 36px;
+  align-items: stretch;
+}
+.field-row.no-border { border-bottom: none; }
+.field-row:last-child { border-bottom: none; }
+
+.col-label {
+  background: #f7f6f2;
+  border-right: 1px solid var(--rule);
+  padding: 8px 12px;
+  font-size: 11px; font-weight: 500; color: var(--ink2);
+  display: flex; align-items: center;
+  min-width: 0;
+}
+.col-label.num { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent); min-width: 32px; max-width: 32px; justify-content: center; border-right: 1px solid var(--rule); }
+.col-label.w30 { min-width: 30%; max-width: 30%; }
+.col-label.w40 { min-width: 40%; max-width: 40%; }
+.col-label.w50 { min-width: 50%; max-width: 50%; }
+.col-label.sub { padding-left: 24px; font-style: italic; font-weight: 400; }
+.col-value {
+  padding: 0;
+  display: flex; align-items: stretch;
+  min-width: 0; flex: 1;
+}
+.col-value.split { display: grid; }
+
+input[type=text], input[type=email], input[type=number], input[type=tel],
+select, textarea {
+  width: 100%; height: 100%; min-height: 36px;
+  border: none; background: transparent;
+  font-family: var(--font); font-size: 12px; color: var(--ink);
+  padding: 6px 10px; outline: none;
+  resize: none;
+}
+input[type=text]:focus, input[type=email]:focus, input[type=number]:focus,
+input[type=tel]:focus, select:focus, textarea:focus {
+  background: #eef4fb;
+}
+textarea { min-height: 60px; }
+
+.inline-pair {
+  display: grid;
+  border-bottom: 1px solid var(--rule);
+}
+.inline-cell {
+  display: flex; align-items: stretch; border-right: 1px solid var(--rule);
+}
+.inline-cell:last-child { border-right: none; }
+.inline-cell .lbl {
+  background: #f7f6f2; padding: 8px 10px;
+  font-size: 11px; font-weight: 500; color: var(--ink2);
+  display: flex; align-items: center; border-right: 1px solid var(--rule);
+  white-space: nowrap;
+}
+.inline-cell input { flex: 1; }
+
+/* ── RADIO / CHECKBOX TYPE ────────────────────────────── */
+.type-grid {
+  display: flex; flex-wrap: wrap; gap: 0;
+  padding: 6px 12px; align-items: center;
+}
+.type-grid label {
+  display: flex; align-items: center; gap: 5px;
+  margin-right: 16px; font-size: 11px; cursor: pointer;
+  padding: 3px 0;
+}
+.type-grid input[type=checkbox], .type-grid input[type=radio] {
+  width: 13px; height: 13px; min-height: 13px; padding: 0; cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* ── EMPLOYEE TABLE ───────────────────────────────────── */
+.emp-table-wrap { overflow-x: auto; border-bottom: 1px solid var(--rule); }
+.emp-table {
+  width: 100%; border-collapse: collapse; font-size: 11px;
+}
+.emp-table th {
+  background: #eeecea; text-align: center; padding: 6px 4px;
+  font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: .04em;
+  border-bottom: 1px solid var(--rule-dark); border-right: 1px solid var(--rule);
+  color: var(--ink2);
+}
+.emp-table th:first-child { text-align: left; padding-left: 12px; }
+.emp-table td {
+  border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule);
+  padding: 0;
+}
+.emp-table td:first-child {
+  background: #f7f6f2; padding: 5px 12px;
+  font-weight: 500; font-size: 11px; color: var(--ink2);
+}
+.emp-table td.total-row {
+  background: #eeecea; font-weight: 600; text-align: center;
+  padding: 5px; font-size: 11px; color: var(--ink);
+}
+.emp-table input {
+  text-align: center; font-family: var(--mono); font-size: 12px;
+  min-height: 30px;
+}
+.emp-table tfoot td { background: #eeecea; font-weight: 600; }
+
+/* ── SHIFT TABLE ──────────────────────────────────────── */
+.shift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  border-top: 1px solid var(--rule);
+}
+.shift-cell {
+  border-right: 1px solid var(--rule); padding: 8px 10px;
+}
+.shift-cell:last-child { border-right: none; }
+.shift-cell .sh-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--ink3); margin-bottom: 6px;
+}
+.shift-cell .sh-row {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
+}
+.shift-cell .sh-row span { font-size: 10px; color: var(--ink3); min-width: 60px; }
+.shift-cell input { font-family: var(--mono); font-size: 12px; border: 1px solid var(--rule); border-radius: 3px; padding: 3px 6px; width: 80px; min-height: unset; background: #fff; }
+
+/* ── MACHINE TABLES ───────────────────────────────────── */
+.machine-table-wrap { overflow-x: auto; }
+.machine-table {
+  width: 100%; border-collapse: collapse; font-size: 11px;
+}
+.machine-table th {
+  background: #eeecea; text-align: center; padding: 5px 4px;
+  font-weight: 600; font-size: 10px; letter-spacing: .04em; text-transform: uppercase;
+  border-bottom: 1px solid var(--rule-dark); border-right: 1px solid var(--rule);
+  color: var(--ink2);
+}
+.machine-table th.lh { text-align: left; padding-left: 10px; }
+.machine-table td {
+  border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule); padding: 0;
+}
+.machine-table td.row-lbl {
+  background: #f7f6f2; padding: 5px 10px; font-weight: 500; color: var(--ink2);
+  font-size: 10px; white-space: nowrap;
+}
+.machine-table td.spec-lbl {
+  background: #f7f6f2; padding: 5px 10px; font-size: 10px; color: var(--ink3);
+  font-style: italic; padding-left: 20px;
+}
+.machine-table input {
+  text-align: center; font-family: var(--mono); font-size: 11px; min-height: 28px;
+}
+.machine-table select { font-size: 11px; min-height: 28px; padding: 3px 6px; }
+.add-row-btn {
+  font-size: 11px; color: var(--accent2); background: none; border: none;
+  cursor: pointer; padding: 6px 12px; font-family: var(--font);
+}
+.add-row-btn:hover { text-decoration: underline; }
+
+/* ── MEASURING TOOLS TABLE ────────────────────────────── */
+.tools-table-wrap { overflow-x: auto; }
+.tools-table {
+  width: 100%; border-collapse: collapse; font-size: 11px;
+}
+.tools-table th {
+  background: var(--accent); color: #fff;
+  text-align: center; padding: 6px 4px;
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  border-right: 1px solid rgba(255,255,255,.2);
+}
+.tools-table th:first-child { width: 32px; }
+.tools-table td {
+  border-bottom: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  padding: 0;
+}
+.tools-table td.no-cell {
+  background: #f7f6f2; text-align: center; padding: 4px;
+  font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--ink3);
+}
+.tools-table input, .tools-table select {
+  font-size: 11px; min-height: 30px;
+}
+.del-btn {
+  background: none; border: none; cursor: pointer; color: #ccc; font-size: 14px;
+  width: 28px; display: flex; align-items: center; justify-content: center;
+  transition: .15s;
+}
+.del-btn:hover { color: var(--warn); }
+
+/* ── FORM FOOTER ──────────────────────────────────────── */
+.form-footer {
+  border-top: 2px solid var(--accent);
+  padding: 16px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: var(--ink3); letter-spacing: .04em;
+}
+
+/* ── PRINT ────────────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 14mm 12mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: #fff; font-size: 10pt; }
+  #shell { padding: 0; max-width: 100%; }
+  .toolbar, .toast { display: none !important; }
+  #form-paper { box-shadow: none; border: none; }
+  input, select, textarea {
+    border: none !important; background: transparent !important;
+    padding: 4px 8px;
+  }
+  .del-btn, .add-row-btn { display: none !important; }
+  .section-header { background: #1a3a5c !important; color: #fff !important; }
+  .form-header-right { background: #1a3a5c !important; }
+  .tools-table th { background: #1a3a5c !important; color: #fff !important; }
+}
+
+/* ── SUBMISSIONS PANEL ────────────────────────────────── */
+#submissions-panel {
+  margin-top: 24px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+}
+.sub-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; border-bottom: 1px solid var(--rule);
+  background: #f7f6f2;
+}
+.sub-header h2 { font-size: 13px; font-weight: 600; color: var(--accent); }
+.sub-list { padding: 0; }
+.sub-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px; border-bottom: 1px solid var(--rule);
+  gap: 12px; flex-wrap: wrap;
+}
+.sub-item:last-child { border-bottom: none; }
+.sub-item-info { flex: 1; min-width: 0; }
+.sub-item-name { font-weight: 500; font-size: 13px; }
+.sub-item-meta { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.sub-item-actions { display: flex; gap: 6px; }
+.empty-state {
+  padding: 32px; text-align: center; color: var(--ink3); font-size: 12px;
+}
+
+/* ── MODE SWITCHER ────────────────────────────────────── */
+.mode-tabs {
+  display: flex; gap: 0; margin-bottom: 16px;
+  border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
+  width: fit-content;
+}
+.mode-tab {
+  padding: 7px 18px; font-size: 12px; font-weight: 500; cursor: pointer;
+  background: #fff; color: var(--ink2); border: none; font-family: var(--font);
+  border-right: 1px solid var(--rule);
+}
+.mode-tab:last-child { border-right: none; }
+.mode-tab.active { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div>
+        <h1>UTPE Subcontractor Facility Form</h1>
+        <p>Formulir Informasi Subkontraktor UTPE &nbsp;·&nbsp; Ver. 2025</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="mode-tabs">
+        <button class="mode-tab active" onclick="switchMode('form')">Fill Form</button>
+        <button class="mode-tab" onclick="switchMode('submissions')">Submissions</button>
+      </div>
+      <div class="toolbar-right" id="form-actions">
+        <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨 Print / PDF</button>
+        <button class="btn btn-primary" onclick="submitForm()">Submit ↗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- FORM SECTION                                       -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div id="form-section">
+  <div id="form-paper">
+
+    <!-- Header -->
+    <div class="form-header">
+      <div class="form-header-left">
+        <div class="form-title">Formulir Informasi Subcontractor</div>
+        <div class="form-subtitle">UTPE Vendor Facility Assessment &nbsp;·&nbsp; Confidential</div>
+        <div style="margin-top:8px;font-size:10px;color:var(--ink3)">
+          Isi formulir ini dengan lengkap dan benar. Semua informasi bersifat rahasia.
+        </div>
+      </div>
+      <div class="form-header-right">
+        <span class="lbl">Tanggal Pengisian</span>
+        <span class="val" id="display-date"></span>
+        <span class="lbl" style="margin-top:8px">No. Formulir</span>
+        <span class="val" id="display-no">–</span>
+      </div>
+    </div>
+
+    <!-- ── SECTION A: COMPANY INFO ─────────────────── -->
+    <div class="section-header">A &nbsp;·&nbsp; Informasi Perusahaan</div>
+    <div class="form-body">
+
+      <!-- 1. Nama Perusahaan -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">1</div>
+        <div class="col-label w30">Nama Perusahaan</div>
+        <div class="col-value"><input type="text" id="company_name" placeholder="PT. / CV. ..."></div>
+      </div>
+
+      <!-- 2. Office Detail -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr;border-bottom:none">
+        <div class="col-label num">2</div>
+        <div class="col-label w30">Detail Kantor</div>
+        <div></div>
+      </div>
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Alamat Kantor</div>
+        <div class="col-value"><textarea id="office_address" placeholder="Jl. ...&#10;Kota, Provinsi, Kode Pos" rows="2" style="min-height:52px"></textarea></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 120px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Nomor Telepon</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="tel" id="office_phone" placeholder="0xxx-xxxx-xxxx"></div>
+        <div class="col-label sub" style="background:#f7f6f2;border-left:none">Fax</div>
+        <div class="col-value"><input type="tel" id="office_fax" placeholder="(opsional)"></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 120px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Email (Official)</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="email" id="office_email" placeholder="nama@perusahaan.com"></div>
+        <div class="col-label sub" style="background:#f7f6f2;border-left:none">Website</div>
+        <div class="col-value"><input type="text" id="office_website" placeholder="www. (opsional)"></div>
+      </div>
+
+      <!-- 3. Jenis Perusahaan -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">3</div>
+        <div class="col-label">Jenis Perusahaan</div>
+        <div class="col-value">
+          <div class="type-grid">
+            <label><input type="checkbox" name="co_type" value="Cutting"> Cutting</label>
+            <label><input type="checkbox" name="co_type" value="Forming"> Forming</label>
+            <label><input type="checkbox" name="co_type" value="Machining"> Machining</label>
+            <label><input type="checkbox" name="co_type" value="Fabrication"> Fabrication</label>
+            <label><input type="checkbox" name="co_type" value="Assembling"> Assembling</label>
+            <label><input type="checkbox" name="co_type" value="Painting"> Painting</label>
+            <label><input type="checkbox" name="co_type" value="Bussiness firm"> Bussiness firm</label>
+            <label><input type="checkbox" name="co_type" value="Others"> Others:</label>
+            <input type="text" id="co_type_other" placeholder="..." style="width:120px;border:1px solid var(--rule);border-radius:2px;min-height:24px;padding:2px 6px">
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Tahun Berdiri -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">4</div>
+        <div class="col-label">Tahun Berdiri Perusahaan</div>
+        <div class="col-value"><input type="text" id="founded_year" placeholder="contoh: 2015" style="max-width:160px"></div>
+      </div>
+
+      <!-- 5. Induk/Anak -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">5</div>
+        <div class="col-label">Induk / Anak Perusahaan</div>
+        <div class="col-value"><input type="text" id="parent_company" placeholder="Isi jika ada, kosongkan jika tidak"></div>
+      </div>
+
+      <!-- 6. Nama Owner -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">6</div>
+        <div class="col-label">Nama Owner / Direktur</div>
+        <div class="col-value"><input type="text" id="owner_name" placeholder="Nama lengkap"></div>
+      </div>
+
+      <!-- 7. Telp Owner -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">7</div>
+        <div class="col-label">No. Telepon Owner</div>
+        <div class="col-value"><input type="tel" id="owner_phone" placeholder="0xxx-xxxx-xxxx"></div>
+      </div>
+    </div><!-- /form-body -->
+
+    <!-- ── SECTION B: FACTORY INFO ─────────────────── -->
+    <div class="section-header">B &nbsp;·&nbsp; Detail Pabrik / Workshop</div>
+    <div class="form-body">
+
+      <!-- 8. Alamat Pabrik -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr;border-bottom:none">
+        <div class="col-label num">8</div>
+        <div class="col-label">Detail Pabrik</div>
+        <div></div>
+      </div>
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Alamat Pabrik</div>
+        <div class="col-value"><textarea id="factory_address" placeholder="Sama dengan kantor / berbeda" rows="2" style="min-height:52px"></textarea></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 120px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">No. Telepon Pabrik</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="tel" id="factory_phone" placeholder="0xxx-xxxx-xxxx"></div>
+        <div class="col-label sub" style="background:#f7f6f2;border-left:none">Fax</div>
+        <div class="col-value"><input type="tel" id="factory_fax" placeholder="(opsional)"></div>
+      </div>
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Email Pabrik</div>
+        <div class="col-value"><input type="email" id="factory_email" placeholder="(opsional)"></div>
+      </div>
+
+      <!-- 9. Luas Pabrik -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">9</div>
+        <div class="col-label">Luas Pabrik (m²)</div>
+        <div class="col-value"><input type="number" id="factory_size" placeholder="contoh: 500" style="max-width:160px"> <span style="padding:6px 10px;font-size:11px;color:var(--ink3)">m²</span></div>
+      </div>
+
+      <!-- 10. Status Kepemilikan -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">10</div>
+        <div class="col-label">Status Kepemilikan Pabrik</div>
+        <div class="col-value">
+          <div class="type-grid" style="flex:1">
+            <label><input type="radio" name="ownership" value="Milik Sendiri"> Milik Sendiri</label>
+            <label><input type="radio" name="ownership" value="Sewa"> Sewa</label>
+            <span style="font-size:11px;color:var(--ink3);margin-left:8px">Jika Sewa — Sejak:</span>
+            <input type="text" id="lease_from" placeholder="Bulan Tahun" style="width:110px;border:1px solid var(--rule);border-radius:2px;min-height:24px;padding:2px 6px;margin:0 4px">
+            <span style="font-size:11px;color:var(--ink3)">Hingga:</span>
+            <input type="text" id="lease_to" placeholder="Bulan Tahun" style="width:110px;border:1px solid var(--rule);border-radius:2px;min-height:24px;padding:2px 6px;margin-left:4px">
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Karyawan -->
+      <div class="field-row no-border" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">11</div>
+        <div class="col-label" style="align-items:flex-start;padding-top:10px">Jumlah Karyawan<br><span style="font-style:italic;font-weight:400;font-size:10px">Dedicated Produksi</span></div>
+        <div class="col-value" style="display:block;padding:0">
+          <div class="emp-table-wrap">
+            <table class="emp-table" id="emp-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding-left:12px;min-width:140px">Posisi</th>
+                  <th>Tetap</th>
+                  <th>Kontrak</th>
+                  <th>Harian</th>
+                  <th>Borongan</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="emp-body">
+                <!-- rows injected by JS -->
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="total-row" style="text-align:left;padding-left:12px">Total</td>
+                  <td class="total-row" id="tot-tetap">0</td>
+                  <td class="total-row" id="tot-kontrak">0</td>
+                  <td class="total-row" id="tot-harian">0</td>
+                  <td class="total-row" id="tot-borongan">0</td>
+                  <td class="total-row" id="tot-total">0</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. Jam Kerja -->
+      <div class="field-row no-border" style="grid-template-columns:32px 220px 1fr">
+        <div class="col-label num">12</div>
+        <div class="col-label">Jam &amp; Hari Kerja</div>
+        <div class="col-value" style="display:block;padding:0">
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;border-bottom:1px solid var(--rule)">
+            <span style="font-size:11px;font-weight:500;color:var(--ink2)">Hari Kerja / Minggu:</span>
+            <input type="number" id="work_days" min="1" max="7" placeholder="6" style="width:60px;border:1px solid var(--rule);border-radius:2px;padding:3px 6px;min-height:28px;font-family:var(--mono);font-size:13px">
+            <span style="font-size:11px;color:var(--ink3)">hari</span>
+          </div>
+          <div class="shift-grid">
+            <div class="shift-cell">
+              <div class="sh-label">Shift 1</div>
+              <div class="sh-row"><span>Masuk</span><input type="text" id="s1_in" placeholder="07:00"></div>
+              <div class="sh-row"><span>Pulang</span><input type="text" id="s1_out" placeholder="16:00"></div>
+            </div>
+            <div class="shift-cell">
+              <div class="sh-label">Shift 2 <span style="font-size:9px;color:var(--ink3)">(jika ada)</span></div>
+              <div class="sh-row"><span>Masuk</span><input type="text" id="s2_in" placeholder="–"></div>
+              <div class="sh-row"><span>Pulang</span><input type="text" id="s2_out" placeholder="–"></div>
+            </div>
+            <div class="shift-cell">
+              <div class="sh-label">Shift 3 <span style="font-size:9px;color:var(--ink3)">(jika ada)</span></div>
+              <div class="sh-row"><span>Masuk</span><input type="text" id="s3_in" placeholder="–"></div>
+              <div class="sh-row"><span>Pulang</span><input type="text" id="s3_out" placeholder="–"></div>
+            </div>
+            <div class="shift-cell">
+              <div class="sh-label">Lembur</div>
+              <div class="sh-row"><span>Mulai</span><input type="text" id="ot_in" placeholder="–"></div>
+              <div class="sh-row"><span>Selesai</span><input type="text" id="ot_out" placeholder="–"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-body -->
+
+    <!-- ── SECTION C: FACILITIES ───────────────────── -->
+    <div class="section-header">C &nbsp;·&nbsp; Fasilitas &amp; Mesin</div>
+    <div class="form-body">
+
+      <!-- 1. Overhead Crane -->
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 40px 1fr 40px 1fr 40px 1fr 40px 1fr">
+        <div class="col-label num" style="border-right:1px solid var(--rule)">1</div>
+        <div class="col-label" style="background:#f7f6f2;border-right:1px solid var(--rule);padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)" colspan="8">Overhead Crane</div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Qty</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="number" id="crane_qty" placeholder="0" style="max-width:80px;font-family:var(--mono)"></div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Kapasitas</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="text" id="crane_cap" placeholder="ton"></div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Span</div>
+        <div class="col-value"><input type="text" id="crane_span" placeholder="m"></div>
+      </div>
+
+      <!-- 2. Forklift -->
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 40px 1fr 40px 1fr 40px 1fr 40px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="border-right:1px solid var(--rule)">2</div>
+        <div class="col-label" style="background:#f7f6f2;border-right:1px solid var(--rule);padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)">Forklift</div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Qty</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="number" id="fl_qty" placeholder="0" style="max-width:80px;font-family:var(--mono)"></div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Kapasitas</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="text" id="fl_cap" placeholder="ton"></div>
+        <div class="col-label" style="justify-content:flex-end;font-size:10px;color:var(--ink3)">Tipe</div>
+        <div class="col-value"><input type="text" id="fl_type" placeholder="Electric / Diesel"></div>
+      </div>
+
+      <!-- 3. Welding Machines -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;margin-top:1px">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">3</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Mesin Welding</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table" id="welding-table">
+              <thead><tr>
+                <th class="lh" style="width:180px">Jenis Mesin</th>
+                <th>Quantity (unit)</th>
+                <th>Merek / Model</th>
+                <th>Kapasitas / Ampere</th>
+                <th style="width:30px"></th>
+              </tr></thead>
+              <tbody id="welding-body"></tbody>
+            </table>
+          </div>
+          <button class="add-row-btn" onclick="addWeldingRow()">+ Tambah baris</button>
+        </div>
+      </div>
+
+      <!-- 4. Cutting Machines -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">4</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Mesin Cutting</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table" id="cutting-table">
+              <thead><tr>
+                <th class="lh" style="width:160px">Spesifikasi</th>
+                <th>M/C 1</th><th>M/C 2</th><th>M/C 3</th><th>M/C 4</th><th>M/C 5</th>
+              </tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Ketebalan Min (mm)</td><td><input type="text" name="cut_thk_min[]"></td><td><input type="text" name="cut_thk_min[]"></td><td><input type="text" name="cut_thk_min[]"></td><td><input type="text" name="cut_thk_min[]"></td><td><input type="text" name="cut_thk_min[]"></td></tr>
+                <tr><td class="row-lbl">Ketebalan Max (mm)</td><td><input type="text" name="cut_thk_max[]"></td><td><input type="text" name="cut_thk_max[]"></td><td><input type="text" name="cut_thk_max[]"></td><td><input type="text" name="cut_thk_max[]"></td><td><input type="text" name="cut_thk_max[]"></td></tr>
+                <tr><td class="row-lbl">Material (MS/SS/dll)</td><td><input type="text" name="cut_mat[]"></td><td><input type="text" name="cut_mat[]"></td><td><input type="text" name="cut_mat[]"></td><td><input type="text" name="cut_mat[]"></td><td><input type="text" name="cut_mat[]"></td></tr>
+                <tr><td class="row-lbl">Lebar Efektif (mm)</td><td><input type="text" name="cut_w[]"></td><td><input type="text" name="cut_w[]"></td><td><input type="text" name="cut_w[]"></td><td><input type="text" name="cut_w[]"></td><td><input type="text" name="cut_w[]"></td></tr>
+                <tr><td class="row-lbl">Panjang Efektif (mm)</td><td><input type="text" name="cut_l[]"></td><td><input type="text" name="cut_l[]"></td><td><input type="text" name="cut_l[]"></td><td><input type="text" name="cut_l[]"></td><td><input type="text" name="cut_l[]"></td></tr>
+                <tr><td class="row-lbl">Bevel Cutting (Yes/No)</td><td><select name="cut_bevel[]"><option value="">–</option><option>Yes</option><option>No</option></select></td><td><select name="cut_bevel[]"><option value="">–</option><option>Yes</option><option>No</option></select></td><td><select name="cut_bevel[]"><option value="">–</option><option>Yes</option><option>No</option></select></td><td><select name="cut_bevel[]"><option value="">–</option><option>Yes</option><option>No</option></select></td><td><select name="cut_bevel[]"><option value="">–</option><option>Yes</option><option>No</option></select></td></tr>
+                <tr><td class="row-lbl">Power Source</td><td><input type="text" name="cut_power[]" placeholder="Plasma/Oxy/Laser…"></td><td><input type="text" name="cut_power[]"></td><td><input type="text" name="cut_power[]"></td><td><input type="text" name="cut_power[]"></td><td><input type="text" name="cut_power[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Bending -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">5</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Mesin Bending</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table">
+              <thead><tr><th class="lh" style="width:160px">Spesifikasi</th><th>M/C 1</th><th>M/C 2</th><th>M/C 3</th></tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Ketebalan Min (mm)</td><td><input type="text" name="bend_min[]"></td><td><input type="text" name="bend_min[]"></td><td><input type="text" name="bend_min[]"></td></tr>
+                <tr><td class="row-lbl">Ketebalan Max (mm)</td><td><input type="text" name="bend_max[]"></td><td><input type="text" name="bend_max[]"></td><td><input type="text" name="bend_max[]"></td></tr>
+                <tr><td class="row-lbl">Material</td><td><input type="text" name="bend_mat[]"></td><td><input type="text" name="bend_mat[]"></td><td><input type="text" name="bend_mat[]"></td></tr>
+                <tr><td class="row-lbl">Lebar Efektif (mm)</td><td><input type="text" name="bend_w[]"></td><td><input type="text" name="bend_w[]"></td><td><input type="text" name="bend_w[]"></td></tr>
+                <tr><td class="row-lbl">Tonnage (ton)</td><td><input type="text" name="bend_ton[]"></td><td><input type="text" name="bend_ton[]"></td><td><input type="text" name="bend_ton[]"></td></tr>
+                <tr><td class="row-lbl">Radius Tersedia</td><td><input type="text" name="bend_rad[]"></td><td><input type="text" name="bend_rad[]"></td><td><input type="text" name="bend_rad[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Roll Bending -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">6</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Mesin Roll Bending</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table">
+              <thead><tr><th class="lh" style="width:160px">Spesifikasi</th><th>M/C 1</th><th>M/C 2</th><th>M/C 3</th></tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Ketebalan Min (mm)</td><td><input type="text" name="roll_min[]"></td><td><input type="text" name="roll_min[]"></td><td><input type="text" name="roll_min[]"></td></tr>
+                <tr><td class="row-lbl">Ketebalan Max (mm)</td><td><input type="text" name="roll_max[]"></td><td><input type="text" name="roll_max[]"></td><td><input type="text" name="roll_max[]"></td></tr>
+                <tr><td class="row-lbl">Material</td><td><input type="text" name="roll_mat[]"></td><td><input type="text" name="roll_mat[]"></td><td><input type="text" name="roll_mat[]"></td></tr>
+                <tr><td class="row-lbl">Lebar Efektif (mm)</td><td><input type="text" name="roll_w[]"></td><td><input type="text" name="roll_w[]"></td><td><input type="text" name="roll_w[]"></td></tr>
+                <tr><td class="row-lbl">Radius Minimum</td><td><input type="text" name="roll_rad[]"></td><td><input type="text" name="roll_rad[]"></td><td><input type="text" name="roll_rad[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Lathe -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">7</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Mesin Bubut (Lathe)</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table">
+              <thead><tr><th class="lh" style="width:160px">Spesifikasi</th><th>M/C 1</th><th>M/C 2</th><th>M/C 3</th></tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Diameter Max (mm)</td><td><input type="text" name="lathe_dia[]"></td><td><input type="text" name="lathe_dia[]"></td><td><input type="text" name="lathe_dia[]"></td></tr>
+                <tr><td class="row-lbl">Panjang Max (mm)</td><td><input type="text" name="lathe_len[]"></td><td><input type="text" name="lathe_len[]"></td><td><input type="text" name="lathe_len[]"></td></tr>
+                <tr><td class="row-lbl">Merek / Model</td><td><input type="text" name="lathe_brand[]"></td><td><input type="text" name="lathe_brand[]"></td><td><input type="text" name="lathe_brand[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. CNC Milling -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">8</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">CNC Milling</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table">
+              <thead><tr><th class="lh" style="width:220px">Spesifikasi</th><th>M/C 1</th><th>M/C 2</th><th>M/C 3</th></tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Meja Kerja L×W×H (mm)</td><td><input type="text" name="cnc_table[]"></td><td><input type="text" name="cnc_table[]"></td><td><input type="text" name="cnc_table[]"></td></tr>
+                <tr><td class="row-lbl">Spindle Type</td><td><input type="text" name="cnc_spindle[]"></td><td><input type="text" name="cnc_spindle[]"></td><td><input type="text" name="cnc_spindle[]"></td></tr>
+                <tr><td class="row-lbl">Merek / Model</td><td><input type="text" name="cnc_brand[]"></td><td><input type="text" name="cnc_brand[]"></td><td><input type="text" name="cnc_brand[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Milling -->
+      <div class="field-row no-border" style="grid-template-columns:32px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num" style="align-self:flex-start;padding-top:10px">9</div>
+        <div style="flex:1">
+          <div style="padding:6px 12px;background:#f7f6f2;border-bottom:1px solid var(--rule);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)">Milling / Frais</div>
+          <div class="machine-table-wrap">
+            <table class="machine-table">
+              <thead><tr><th class="lh" style="width:220px">Spesifikasi</th><th>M/C 1</th><th>M/C 2</th><th>M/C 3</th></tr></thead>
+              <tbody>
+                <tr><td class="row-lbl">Meja Kerja L×W×H (mm)</td><td><input type="text" name="mill_table[]"></td><td><input type="text" name="mill_table[]"></td><td><input type="text" name="mill_table[]"></td></tr>
+                <tr><td class="row-lbl">Spindle Type</td><td><input type="text" name="mill_spindle[]"></td><td><input type="text" name="mill_spindle[]"></td><td><input type="text" name="mill_spindle[]"></td></tr>
+                <tr><td class="row-lbl">Merek / Model</td><td><input type="text" name="mill_brand[]"></td><td><input type="text" name="mill_brand[]"></td><td><input type="text" name="mill_brand[]"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Blasting & Painting -->
+      <div class="field-row no-border" style="grid-template-columns:32px 220px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num">10</div>
+        <div class="col-label">Blasting &amp; Painting</div>
+        <div></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 40px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Blasting Booth (P×L×T mm)</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="text" id="blasting_size" placeholder="misal: 6000×4000×3000"></div>
+        <div class="col-label" style="background:#f7f6f2;font-size:10px;justify-content:center">Ada?</div>
+        <div class="col-value"><div class="type-grid"><label><input type="radio" name="has_blasting" value="Ya"> Ya</label><label><input type="radio" name="has_blasting" value="Tidak"> Tidak</label></div></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 40px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Painting Booth (P×L×T mm)</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><input type="text" id="painting_size" placeholder="misal: 4000×3000×2000"></div>
+        <div class="col-label" style="background:#f7f6f2;font-size:10px;justify-content:center">Ada?</div>
+        <div class="col-value"><div class="type-grid"><label><input type="radio" name="has_painting" value="Ya"> Ya</label><label><input type="radio" name="has_painting" value="Tidak"> Tidak</label></div></div>
+      </div>
+      <div class="inline-pair" style="display:grid;grid-template-columns:32px 220px 1fr 220px 1fr">
+        <div class="col-label num"></div>
+        <div class="col-label sub">Oven / Force Dryer</div>
+        <div class="col-value" style="border-right:1px solid var(--rule)"><div class="type-grid"><label><input type="radio" name="has_oven" value="Ya"> Ya</label><label><input type="radio" name="has_oven" value="Tidak"> Tidak</label></div></div>
+        <div class="col-label sub">Kapasitas Kompresor (bar)</div>
+        <div class="col-value"><input type="text" id="compressor_bar" placeholder="contoh: 10"></div>
+      </div>
+
+      <!-- 11. Fasilitas Lain -->
+      <div class="field-row" style="grid-template-columns:32px 220px 1fr;border-top:1px solid var(--rule)">
+        <div class="col-label num">11</div>
+        <div class="col-label" style="align-items:flex-start;padding-top:10px">Fasilitas Lain<br><span style="font-style:italic;font-weight:400;font-size:10px">yang tidak tercantum</span></div>
+        <div class="col-value"><textarea id="other_facilities" placeholder="Contoh: Tapping Machine M8–M24, Kendaraan Pickup 2 unit, Mesin Plasma, dll." style="min-height:60px"></textarea></div>
+      </div>
+
+    </div><!-- /form-body -->
+
+    <!-- ── SECTION D: MEASURING TOOLS ─────────────── -->
+    <div class="section-header">D &nbsp;·&nbsp; Daftar Alat Ukur</div>
+    <div class="form-body" style="padding-bottom:0">
+      <div class="tools-table-wrap">
+        <table class="tools-table" id="tools-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th style="text-align:left;padding-left:8px">Nama Alat Ukur</th>
+              <th>Spec / Range</th>
+              <th>Brand / Merek</th>
+              <th>PIC QC</th>
+              <th>Tahun Beli</th>
+              <th>Kalibrasi Terakhir</th>
+              <th>Keterangan</th>
+              <th>Status</th>
+              <th style="width:28px"></th>
+            </tr>
+          </thead>
+          <tbody id="tools-body"></tbody>
+        </table>
+      </div>
+      <button class="add-row-btn" onclick="addToolRow()" style="margin:6px 0">+ Tambah alat ukur</button>
+    </div>
+
+    <!-- ── FORM FOOTER ─────────────────────────────── -->
+    <div class="form-footer">
+      <div>
+        <strong>UTPE</strong> &nbsp;·&nbsp; Formulir Informasi Subcontractor &nbsp;·&nbsp; Ver. 2025 &nbsp;·&nbsp; Confidential
+      </div>
+      <div style="display:flex;gap:48px">
+        <div style="text-align:center">
+          <div style="border-top:1px solid var(--rule-dark);width:140px;padding-top:4px;margin-top:24px">Diisi oleh</div>
+        </div>
+        <div style="text-align:center">
+          <div style="border-top:1px solid var(--rule-dark);width:140px;padding-top:4px;margin-top:24px">Diperiksa oleh</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#form-paper -->
+  </div><!-- /#form-section -->
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- SUBMISSIONS PANEL                                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div id="submissions-panel" style="display:none">
+    <div class="sub-header">
+      <h2>Submitted Forms</h2>
+      <button class="btn btn-outline" onclick="exportCSV()" style="font-size:11px">⬇ Export CSV</button>
+    </div>
+    <div class="sub-list" id="sub-list">
+      <div class="empty-state">Belum ada submission.</div>
+    </div>
+  </div>
+
+</div><!-- /#shell -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── EMPLOYEE ROWS ────────────────────────────────────
+const EMP_ROLES = ['Welder','Assembler','Painter','QC Inspector','Machining / Forming / PB','Engineer','Supervisor','Helper'];
+function initEmpTable(){
+  const b = document.getElementById('emp-body');
+  b.innerHTML = EMP_ROLES.map(r=>`<tr>
+    <td class="row-lbl">${r}</td>
+    <td><input type="number" class="emp-inp" data-col="tetap" min="0" oninput="updateEmpTotals()" placeholder="0"></td>
+    <td><input type="number" class="emp-inp" data-col="kontrak" min="0" oninput="updateEmpTotals()" placeholder="0"></td>
+    <td><input type="number" class="emp-inp" data-col="harian" min="0" oninput="updateEmpTotals()" placeholder="0"></td>
+    <td><input type="number" class="emp-inp" data-col="borongan" min="0" oninput="updateEmpTotals()" placeholder="0"></td>
+    <td><input type="number" class="emp-inp" data-col="total" min="0" oninput="updateEmpTotals()" style="background:#f0f4f8" placeholder="0"></td>
+  </tr>`).join('');
+}
+function updateEmpTotals(){
+  ['tetap','kontrak','harian','borongan','total'].forEach(col=>{
+    const inputs = document.querySelectorAll(`[data-col="${col}"]`);
+    let sum = 0;
+    inputs.forEach(i=>{ sum += parseInt(i.value)||0; });
+    document.getElementById('tot-'+col).textContent = sum;
+  });
+}
+initEmpTable();
+
+// ── WELDING ROWS ─────────────────────────────────────
+const WELD_TYPES = ['GMAW (MIG/MAG)','SMAW (Stick)','GTAW (TIG)','SAW','FCAW','Others'];
+function initWeldingTable(){
+  const b = document.getElementById('welding-body');
+  b.innerHTML = WELD_TYPES.map(t=>`<tr>
+    <td class="row-lbl">${t}</td>
+    <td><input type="number" name="weld_qty[]" min="0" style="font-family:var(--mono)"></td>
+    <td><input type="text" name="weld_brand[]"></td>
+    <td><input type="text" name="weld_amp[]"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>
+  </tr>`).join('');
+}
+function addWeldingRow(){
+  const b = document.getElementById('welding-body');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" name="weld_type[]" placeholder="Jenis mesin…" style="text-align:left;padding-left:8px"></td>
+    <td><input type="number" name="weld_qty[]" min="0" style="font-family:var(--mono)"></td>
+    <td><input type="text" name="weld_brand[]"></td>
+    <td><input type="text" name="weld_amp[]"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  b.appendChild(tr);
+}
+initWeldingTable();
+
+// ── MEASURING TOOL ROWS ──────────────────────────────
+let toolCount = 0;
+function addToolRow(data){
+  toolCount++;
+  const b = document.getElementById('tools-body');
+  const tr = document.createElement('tr');
+  const d = data || {};
+  tr.innerHTML = `
+    <td class="no-cell">${toolCount}</td>
+    <td><input type="text" name="tool_name[]" value="${d.name||''}" placeholder="Nama alat ukur" style="text-align:left;padding-left:8px;min-width:160px"></td>
+    <td><input type="text" name="tool_spec[]" value="${d.spec||''}" placeholder="Range/Spec"></td>
+    <td><input type="text" name="tool_brand[]" value="${d.brand||''}" placeholder="Merek"></td>
+    <td><input type="text" name="tool_pic[]" value="${d.pic||''}" placeholder="PIC QC"></td>
+    <td><input type="text" name="tool_year[]" value="${d.year||''}" placeholder="Thn beli"></td>
+    <td><input type="text" name="tool_calib[]" value="${d.calib||''}" placeholder="Tgl kalibrasi"></td>
+    <td><input type="text" name="tool_note[]" value="${d.note||''}" placeholder="No. sertifikat, dll."></td>
+    <td><select name="tool_status[]">
+      <option value="">–</option>
+      <option ${d.status==='Terkalibrasi'?'selected':''}>Terkalibrasi</option>
+      <option ${d.status==='Belum Terkalibrasi'?'selected':''}>Belum Terkalibrasi</option>
+      <option ${d.status==='Kadaluarsa'?'selected':''}>Kadaluarsa</option>
+    </select></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();renumberTools()">×</button></td>`;
+  b.appendChild(tr);
+}
+function renumberTools(){
+  document.querySelectorAll('#tools-body .no-cell').forEach((c,i)=>c.textContent=i+1);
+  toolCount = document.querySelectorAll('#tools-body tr').length;
+}
+// Start with 5 empty rows
+for(let i=0;i<5;i++) addToolRow();
+
+// ── DATE & FORM NUMBER ───────────────────────────────
+function pad(n){return String(n).padStart(2,'0');}
+const now = new Date();
+document.getElementById('display-date').textContent =
+  `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+const fno = 'UTPE-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
+document.getElementById('display-no').textContent = fno;
+
+// ── COLLECT FORM DATA ────────────────────────────────
+function collectForm(){
+  const v = id=>document.getElementById(id)?.value||'';
+  const checks = [...document.querySelectorAll('[name=co_type]:checked')].map(c=>c.value);
+  if(document.getElementById('co_type_other').value) checks.push(document.getElementById('co_type_other').value);
+  const ownership = document.querySelector('[name=ownership]:checked')?.value||'';
+  const empRows = {};
+  document.querySelectorAll('#emp-body tr').forEach(tr=>{
+    const lbl = tr.cells[0].textContent.trim();
+    const inp = [...tr.querySelectorAll('input')];
+    empRows[lbl] = {tetap:inp[0]?.value||0,kontrak:inp[1]?.value||0,harian:inp[2]?.value||0,borongan:inp[3]?.value||0,total:inp[4]?.value||0};
+  });
+  const getTableCols = name=>{
+    const inputs = document.querySelectorAll(`[name="${name}"]`);
+    return [...inputs].map(i=>i.value||'');
+  };
+  const tools = [];
+  document.querySelectorAll('#tools-body tr').forEach(tr=>{
+    const inp = tr.querySelectorAll('input,select');
+    if(inp.length>=9){
+      tools.push({name:inp[0].value,spec:inp[1].value,brand:inp[2].value,pic:inp[3].value,year:inp[4].value,calib:inp[5].value,note:inp[6].value,status:inp[7].value});
+    }
+  });
+  return {
+    form_no: fno,
+    submitted_at: new Date().toISOString(),
+    company_name: v('company_name'),
+    office_address: v('office_address'),
+    office_phone: v('office_phone'),
+    office_fax: v('office_fax'),
+    office_email: v('office_email'),
+    office_website: v('office_website'),
+    company_type: checks.join(', '),
+    founded_year: v('founded_year'),
+    parent_company: v('parent_company'),
+    owner_name: v('owner_name'),
+    owner_phone: v('owner_phone'),
+    factory_address: v('factory_address'),
+    factory_phone: v('factory_phone'),
+    factory_size: v('factory_size'),
+    ownership, lease_from: v('lease_from'), lease_to: v('lease_to'),
+    employees: empRows,
+    work_days: v('work_days'),
+    shifts: {s1_in:v('s1_in'),s1_out:v('s1_out'),s2_in:v('s2_in'),s2_out:v('s2_out'),s3_in:v('s3_in'),s3_out:v('s3_out')},
+    crane: {qty:v('crane_qty'),cap:v('crane_cap'),span:v('crane_span')},
+    forklift: {qty:v('fl_qty'),cap:v('fl_cap'),type:v('fl_type')},
+    blasting_size: v('blasting_size'),
+    has_blasting: document.querySelector('[name=has_blasting]:checked')?.value||'',
+    painting_size: v('painting_size'),
+    has_painting: document.querySelector('[name=has_painting]:checked')?.value||'',
+    has_oven: document.querySelector('[name=has_oven]:checked')?.value||'',
+    compressor_bar: v('compressor_bar'),
+    other_facilities: v('other_facilities'),
+    cutting: {thk_min:getTableCols('cut_thk_min[]'),thk_max:getTableCols('cut_thk_max[]'),mat:getTableCols('cut_mat[]'),w:getTableCols('cut_w[]'),l:getTableCols('cut_l[]'),bevel:getTableCols('cut_bevel[]'),power:getTableCols('cut_power[]')},
+    measuring_tools: tools
+  };
+}
+
+// ── SUBMIT ───────────────────────────────────────────
+async function submitForm(){
+  const name = document.getElementById('company_name').value.trim();
+  if(!name){ showToast('Nama perusahaan wajib diisi!','#c0392b'); return; }
+  const data = collectForm();
+  try{
+    const existing = JSON.parse(localStorage.getItem('utpe_submissions')||'[]');
+    existing.push(data);
+    localStorage.setItem('utpe_submissions', JSON.stringify(existing));
+    showToast('Form berhasil disimpan! ('+name+')');
+    renderSubmissions();
+  }catch(e){
+    showToast('Gagal menyimpan. Coba lagi.','#c0392b');
+  }
+}
+
+// ── SUBMISSIONS LIST ─────────────────────────────────
+function renderSubmissions(){
+  const list = document.getElementById('sub-list');
+  const data = JSON.parse(localStorage.getItem('utpe_submissions')||'[]');
+  if(!data.length){ list.innerHTML='<div class="empty-state">Belum ada submission.</div>'; return; }
+  list.innerHTML = data.map((d,i)=>{
+    const dt = new Date(d.submitted_at);
+    const dtStr = `${pad(dt.getDate())}/${pad(dt.getMonth()+1)}/${dt.getFullYear()} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+    const tools = d.measuring_tools||[];
+    const calibrated = tools.filter(t=>t.status==='Terkalibrasi').length;
+    return `<div class="sub-item">
+      <div class="sub-item-info">
+        <div class="sub-item-name">${d.company_name||'(tanpa nama)'}</div>
+        <div class="sub-item-meta">${d.form_no} &nbsp;·&nbsp; ${dtStr} &nbsp;·&nbsp; ${tools.length} alat ukur (${calibrated} terkalibrasi) &nbsp;·&nbsp; ${d.company_type||'–'}</div>
+      </div>
+      <div class="sub-item-actions">
+        <button class="btn btn-outline" style="font-size:11px" onclick="loadIntoForm(${i})">Buka &amp; Print</button>
+        <button class="btn btn-danger" style="font-size:11px" onclick="deleteSubmission(${i})">Hapus</button>
+      </div>
+    </div>`;
+  }).reverse().join('');
+}
+
+function loadIntoForm(idx){
+  const data = JSON.parse(localStorage.getItem('utpe_submissions')||'[]');
+  const d = data[idx];
+  if(!d) return;
+  const setV = (id,val)=>{ const el=document.getElementById(id); if(el) el.value=val||''; };
+  setV('company_name',d.company_name); setV('office_address',d.office_address);
+  setV('office_phone',d.office_phone); setV('office_fax',d.office_fax);
+  setV('office_email',d.office_email); setV('office_website',d.office_website);
+  setV('founded_year',d.founded_year); setV('parent_company',d.parent_company);
+  setV('owner_name',d.owner_name); setV('owner_phone',d.owner_phone);
+  setV('factory_address',d.factory_address); setV('factory_phone',d.factory_phone);
+  setV('factory_size',d.factory_size); setV('lease_from',d.lease_from); setV('lease_to',d.lease_to);
+  setV('work_days',d.work_days); setV('blasting_size',d.blasting_size); setV('painting_size',d.painting_size);
+  setV('compressor_bar',d.compressor_bar); setV('other_facilities',d.other_facilities);
+  setV('crane_qty',d.crane?.qty); setV('crane_cap',d.crane?.cap); setV('crane_span',d.crane?.span);
+  setV('fl_qty',d.forklift?.qty); setV('fl_cap',d.forklift?.cap); setV('fl_type',d.forklift?.type);
+  setV('s1_in',d.shifts?.s1_in); setV('s1_out',d.shifts?.s1_out);
+  setV('s2_in',d.shifts?.s2_in); setV('s2_out',d.shifts?.s2_out);
+  if(d.ownership){ const r=document.querySelector(`[name=ownership][value="${d.ownership}"]`); if(r) r.checked=true; }
+  if(d.measuring_tools){
+    document.getElementById('tools-body').innerHTML=''; toolCount=0;
+    d.measuring_tools.forEach(t=>addToolRow(t));
+  }
+  switchMode('form');
+  window.scrollTo(0,0);
+  setTimeout(()=>window.print(),300);
+}
+
+function deleteSubmission(idx){
+  if(!confirm('Yakin hapus submission ini?')) return;
+  const data = JSON.parse(localStorage.getItem('utpe_submissions')||'[]');
+  data.splice(idx,1);
+  localStorage.setItem('utpe_submissions',JSON.stringify(data));
+  renderSubmissions();
+}
+
+// ── CSV EXPORT ────────────────────────────────────────
+function exportCSV(){
+  const data = JSON.parse(localStorage.getItem('utpe_submissions')||'[]');
+  if(!data.length){ showToast('Tidak ada data untuk diekspor.','#c0392b'); return; }
+  const headers = ['Form No','Submitted At','Company Name','Email','Phone','Company Type','Founded','Owner','Factory Size (m2)','Ownership','Work Days','Crane Qty','Crane Cap','Forklift Qty','Forklift Cap','Painting Booth','Compressor (bar)','Total Measuring Tools','Calibrated Tools'];
+  const rows = data.map(d=>{
+    const tools = d.measuring_tools||[];
+    const calibrated = tools.filter(t=>t.status==='Terkalibrasi').length;
+    return [d.form_no,d.submitted_at,d.company_name,d.office_email,d.office_phone,d.company_type,d.founded_year,d.owner_name,d.factory_size,d.ownership,d.work_days,d.crane?.qty,d.crane?.cap,d.forklift?.qty,d.forklift?.cap,d.painting_size,d.compressor_bar,tools.length,calibrated]
+      .map(v=>'"'+(String(v||'').replace(/"/g,'""'))+'"');
+  });
+  const csv = [headers.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = 'utpe_submissions_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ── MODE SWITCH ───────────────────────────────────────
+function switchMode(mode){
+  document.getElementById('form-section').style.display = mode==='form'?'block':'none';
+  document.getElementById('submissions-panel').style.display = mode==='submissions'?'block':'none';
+  document.getElementById('form-actions').style.display = mode==='form'?'flex':'none';
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active', t.textContent.toLowerCase().includes(mode==='form'?'fill':'sub')));
+  if(mode==='submissions') renderSubmissions();
+}
+
+// ── CLEAR FORM ────────────────────────────────────────
+function clearForm(){
+  if(!confirm('Yakin ingin mengosongkan semua isian?')) return;
+  document.querySelectorAll('#form-paper input[type=text],#form-paper input[type=email],#form-paper input[type=number],#form-paper input[type=tel],#form-paper textarea,#form-paper select').forEach(el=>{
+    if(el.type==='radio'||el.type==='checkbox') el.checked=false;
+    else el.value='';
+  });
+  document.getElementById('tools-body').innerHTML=''; toolCount=0;
+  for(let i=0;i<5;i++) addToolRow();
+  updateEmpTotals();
+  showToast('Form dikosongkan.');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg, bg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = bg||'#1e3a1e';
+  t.style.color = bg?'#fff':'#b8f0b8';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+renderSubmissions();
+</script>
+</body>
+</html>
